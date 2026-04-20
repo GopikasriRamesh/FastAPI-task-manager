@@ -27,7 +27,7 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        headers={"WWW-Authenticate": "Bearer"}, 
     )
     try:
         payload = jwt.decode(token, auth.SECRET_KEY, algorithms=[auth.ALGORITHM])
@@ -42,14 +42,19 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
         raise credentials_exception
     return user
 
-@app.post("/register", response_model=schemas.User)
+@app.post("/register")
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+    try:
+        db_user = crud.get_user_by_email(db, email=user.email)
+        if db_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        return crud.create_user(db=db, user=user)
+    except Exception as e:
+        print(f"CRITICAL ERROR: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/login", response_model=schemas.Token)
+    
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.get_user_by_email(db, email=form_data.username)
     if not user or not auth.verify_password(form_data.password, user.hashed_password):

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { apiRequest } from "@/utils/api";
+import { apiRequest } from "../../utils/api";
 
 export default function Dashboard() {
     const [tasks, setTasks] = useState([]);

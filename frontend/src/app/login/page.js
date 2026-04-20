@@ -14,10 +14,12 @@ export default function Login() {
         formData.append("username", email);
         formData.append("password", password);
 
+        console.log("Full Request URL:", `${process.env.NEXT_PUBLIC_API_URL}/login`);
+
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: formData,
+            body: formData.toString(),
         });
 
         if (res.ok) {
