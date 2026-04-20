@@ -10,7 +10,6 @@ export default function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        
         const formData = new URLSearchParams();
         formData.append("username", email);
         formData.append("password", password);
